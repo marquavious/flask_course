@@ -1,10 +1,11 @@
 import sqlite3
 
-
 class ItemModel:
-    def __init__(self,name,price):
+
+    def __init__(self, name, price):
         self.name = name
         self.price = price
+
     def json(self):
         return {'name':self.name, 'price':self.price}
 
@@ -20,7 +21,8 @@ class ItemModel:
         if row:
             return cls(*row)
 
-    def insert(self,item):
+    def insert(self):
+        print('WOOOOOW')
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()
 
@@ -31,7 +33,8 @@ class ItemModel:
         connection.commit()
         connection.close()
 
-    def update(self,item):
+
+    def update(self):
 
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()

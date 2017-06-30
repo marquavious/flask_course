@@ -1,7 +1,7 @@
 import sqlite3
 from flask_restful import Resource,reqparse
 from flask_jwt import jwt_required
-from models import ItemModel
+from models.item import ItemModel
 
 class Item(Resource):
     parser = reqparse.RequestParser()
@@ -25,9 +25,11 @@ class Item(Resource):
             return {'message':"An item with the name '{}' already exists".format(name)}, 400
 
         data = Item.parser.parse_args()
+
         item = ItemModel(name,data['price'])
 
         try:
+            print('Yea')
             item.insert()
         except:
             return {'message':"An error occured inserting item."}, 500
