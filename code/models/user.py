@@ -1,7 +1,10 @@
-import sqlite3
+
+# Look at item.py for a detailed description of what is going on
+# These are pretty much the same, minor diffrences
+
 from db import db
 
-class UserModel:
+class UserModel(db.Model):
 
     __tablename__ = 'users'
 

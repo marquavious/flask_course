@@ -1,4 +1,7 @@
-import sqlite3
+
+# Look at item.py for a detailed description of what is going on
+# These are pretty much the same, minor diffrences
+
 from flask_restful import Resource, reqparse
 from models.user import UserModel
 
@@ -17,7 +20,6 @@ class UserRegister(Resource):
     )
     def post(self):
         data = UserRegister.parser.parse_args()
-
         if UserModel.find_by_userid(data['username']):
             return {'message': "A user with a that Username already exists."}, 400
 

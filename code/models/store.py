@@ -1,3 +1,7 @@
+
+# Look at item.py for a detailed description of what is going on
+# These are pretty much the same, minor diffrences
+
 from db import db
 
 class StoreModel(db.Model):
@@ -18,7 +22,6 @@ class StoreModel(db.Model):
     @classmethod
     def find_by_name(cls,name):
         return cls.query.filter_by(name=name).first()
-
 
     def save_to_db(self):
         db.session.add(self)

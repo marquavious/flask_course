@@ -1,6 +1,9 @@
+
+# Look at item.py for a detailed description of what is going on
+# These are pretty much the same, minor diffrences
+
 from flask_restful import Resource
 from models.store import StoreModel
-
 
 class Store(Resource):
 
@@ -24,7 +27,6 @@ class Store(Resource):
         return store.json()
 
     def delete(self,name):
-
         store = StoreModel.find_by_name(name)
 
         if store:
