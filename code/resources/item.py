@@ -1,4 +1,4 @@
-import sqlite3
+
 from flask_restful import Resource,reqparse
 from flask_jwt import jwt_required
 from models.item import ItemModel
@@ -10,10 +10,14 @@ class Item(Resource):
         required = True,
         help="This field cannot be left blank!"
     )
+    parser.add_argument('store_id',
+        type = int,
+        required = True,
+        help="Every item needs a store id"
+    )
 
     # @jwt_required()
     def get(self,name):
-
         item = ItemModel.find_by_name(name)
         if item:
             return item.json
@@ -26,11 +30,11 @@ class Item(Resource):
 
         data = Item.parser.parse_args()
 
-        item = ItemModel(name,data['price'])
+        item = ItemModel(name,**data)
 
         try:
             print('Yea')
-            item.insert()
+            item.save_to_db()
         except:
             return {'message':"An error occured inserting item."}, 500
 
@@ -38,54 +42,28 @@ class Item(Resource):
 
 
     def delete(self,name):
+        item = ItemModel.find_by_name(name)
 
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
+        if item:
+            item.delete_from_db()
 
-        query = "DELETE FROM items WHERE name=?"
-        cursor.execute(query,(name,))
-
-        connection.commit()
-        connection.close()
-
-        return {'message': 'Item deleted'}
-
-
+        return {'message':'Item has been deleted'}
 
     def put(self,name):
 
         data = Item.parser.parse_args()
         item = ItemModel.find_by_name(name)
-        updated_item = ItemModel(name,data['price'])
 
         if item is None:
-            try:
-                updated_item.insert()
-            except:
-                return {'message':"An error occured inserting item."}, 500
+            item = ItemModel(name,**data)
 
         else:
-            try:
-                updated_item.update()
-            except:
-                return {'message':"An error occured updating item."}, 500
+            item.price = data['price']
+        item.save_to_db()
 
-        return updated_item.json()
+        return item.json()
 
 class ItemList(Resource):
     def get(self):
-
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
-
-        query = "SELECT * FROM items"
-
-        result = cursor.execute(query)
-        items = []
-
-        for row in result:
-            items.append({'name':row[0],'price':row[1]})
-
-        connection.close()
-
-        return {'items':items}
+        return {'items':[x.json() for x in ItemModel.query.all()]}
+        # return {'items':list(map(lambda x: x.json(), ItemModel.query.all())}
